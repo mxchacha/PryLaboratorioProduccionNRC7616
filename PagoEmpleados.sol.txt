@@ -1,0 +1,50 @@
+pragma solidity ^0.4.0;
+
+contract PagoEmpleados{
+    
+    address[] empleados=[0x3a325a4C71BAfC050683993db08887ef6cF66e51,
+    0xCA539A9A74f82680132017bAB54b431FBA16cf64,
+    0x080b8a1c111033DEc0Fa10BC5c6D5566039350d6,
+    0x2DAbb511AA9dC39bE64700863bc4218019d44EC6];
+    
+    uint totalRecibido=0;//Indica el monto de dinero queha recibido en totalRecibido
+    
+
+    mapping(address=>uint)withdrawAmounts;
+    
+    //PODER SACAR dinero
+    function withDraw()canWithdraw{
+        uint amountAllocated=totalRecibido/empleados.length;
+        uint amountWithdraw= withdrawAmounts[msg.sender];
+        uint amount= amountAllocated- amountWithdraw + amount;
+        
+        if(amount>0){
+            msg.sender.transfer(amount);
+        }
+    }
+    //constructor
+    function PagoEmpleados() payable{
+        
+    }
+    
+    function() payable{
+        updateTotal();
+         
+    }
+    
+    function updateTotal() internal{
+        totalRecibido+=msg.value;
+    }
+    
+    modifier canWithdraw(){
+        bool contains=false; //comprueba si el empleado esta dentro del arreglo
+        for(uint i=0;i<empleados.length;i++){
+            if(empleados[i]==msg.sender){
+                contains=true;
+            }
+        }
+        require(contains);
+        _;
+    }
+    
+}
